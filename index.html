@@ -1,0 +1,282 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Ia-wrapper by jjjake</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Ia-wrapper</h1>
+        <p>A python interface to Archive.org</p>
+
+        <p class="view"><a href="https://github.com/jjjake/ia-wrapper">View the Project on GitHub <small>jjjake/ia-wrapper</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/jjjake/ia-wrapper/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/jjjake/ia-wrapper/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/jjjake/ia-wrapper">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="a-python-interface-to-archiveorg" class="anchor" href="#a-python-interface-to-archiveorg"><span class="octicon octicon-link"></span></a>A python interface to archive.org</h1>
+
+<p><img src="https://travis-ci.org/jjjake/ia-wrapper.png?branch=master%0A%20%20%20%20%20:target:%20https://travis-ci.org/jjjake/ia-wrapper" alt="image"></p>
+
+<p><img src="https://pypip.in/d/internetarchive/badge.png%0A%20%20%20%20%20:target:%20https://pypi.python.org/pypi/internetarchive" alt="image"></p>
+
+<p>This package installs a CLI tool named <code>ia</code> for using archive.org from
+the command-line. It also installs the <code>internetarchive</code> python module
+for programatic access to archive.org. Please report all bugs and issues
+on <a href="https://github.com/jjjake/ia-wrapper/issues">Github</a>.</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>You can install this module via pip:</p>
+
+<p><code>pip install internetarchive</code></p>
+
+<p>Alternatively, you can install a few extra dependencies to help speed
+things up a bit:</p>
+
+<p><code>pip install "internetarchive[speedups]"</code></p>
+
+<p>This will install <a href="https://pypi.python.org/pypi/ujson">ujson</a> for faster
+JSON parsing, and <a href="https://pypi.python.org/pypi/gevent">gevent</a> for
+concurrent downloads.</p>
+
+<p>If you want to install this module globally on your system instead of
+inside a <code>virtualenv</code>, use sudo:</p>
+
+<p><code>sudo pip install internetarchive</code></p>
+
+<h1>
+<a name="command-line-usage" class="anchor" href="#command-line-usage"><span class="octicon octicon-link"></span></a>Command-Line Usage</h1>
+
+<p>Help is available by typing <code>ia --help</code>. You can also get help on a
+command: <code>ia &lt;command&gt; --help</code>. Available subcommands are <code>configure</code>,
+<code>metadata</code>, <code>upload</code>, <code>download</code>, <code>search</code>, <code>mine</code>, and <code>catalog</code>.</p>
+
+<h2>
+<a name="downloading" class="anchor" href="#downloading"><span class="octicon octicon-link"></span></a>Downloading</h2>
+
+<p>To download the entire
+<a href="https://archive.org/details/TripDown1905">TripDown1905</a> item:</p>
+
+<pre lang="sourceCode"><code>$ ia download TripDown1905
+</code></pre>
+
+<p><code>ia download</code> usage examples:</p>
+
+<pre lang="sourceCode"><code>#download just the mp4 files using ``--glob``
+$ ia download TripDown1905 --glob='*.mp4'
+
+#download all the mp4 files using ``--formats``:
+$ ia download TripDown1905 --format='512Kb MPEG4'
+
+#download multiple formats from an item:
+$ ia download TripDown1905 --format='512Kb MPEG4' --format='Ogg Video'
+
+#list all the formats in an item:
+$ ia metadata --formats TripDown1905
+
+#download a single file from an item:
+$ ia download TripDown1905 TripDown1905_512kb.mp4
+
+#download multiple files from an item:
+$ ia download TripDown1905 TripDown1905_512kb.mp4 TripDown1905.ogv
+</code></pre>
+
+<h2>
+<a name="uploading" class="anchor" href="#uploading"><span class="octicon octicon-link"></span></a>Uploading</h2>
+
+<p>You can use the provided <code>ia</code> command-line tool to upload items. You
+need to supply your IAS3 credentials in environment variables in order
+to upload. You can retrieve S3 keys from
+<a href="https://archive.org/account/s3.php">https://archive.org/account/s3.php</a></p>
+
+<pre lang="sourceCode"><code>$ export AWS_ACCESS_KEY_ID='xxx'
+$ export AWS_SECRET_ACCESS_KEY='yyy'
+
+$ ia upload &lt;identifier&gt; file1 file2 --metadata="title:foo" --metadata="blah:arg"
+</code></pre>
+
+<h2>
+<a name="metadata" class="anchor" href="#metadata"><span class="octicon octicon-link"></span></a>Metadata</h2>
+
+<p>You can use the <code>ia</code> command-line tool to download item metadata in JSON
+format:</p>
+
+<pre lang="sourceCode"><code>$ ia metadata TripDown1905
+</code></pre>
+
+<p>You can also modify metadata. Be sure that the AWS_ACCESS_KEY_ID and
+AWS_SECRET_ACCESS_KEY environment variables are set.</p>
+
+<pre lang="sourceCode"><code>$ ia metadata &lt;identifier&gt; --modify="foo:bar" --modify="baz:foooo"
+</code></pre>
+
+<h2>
+<a name="searching" class="anchor" href="#searching"><span class="octicon octicon-link"></span></a>Searching</h2>
+
+<p>You can search using the provided <code>ia</code> command-line script:</p>
+
+<pre lang="sourceCode"><code>$ ia search 'subject:"market street" collection:prelinger'
+</code></pre>
+
+<h2>
+<a name="parallel-downloading" class="anchor" href="#parallel-downloading"><span class="octicon octicon-link"></span></a>Parallel Downloading</h2>
+
+<p>If you have the GNU <code>parallel</code> tool intalled, then you can combine
+<code>ia search</code> and <code>ia metadata</code> to quickly retrieve data for many items in
+parallel:</p>
+
+<pre lang="sourceCode"><code>$ ia search 'subject:"market street" collection:prelinger' | parallel -j40 'ia metadata {} &gt; {}_meta.json'
+</code></pre>
+
+<h1>
+<a name="python-module-usage" class="anchor" href="#python-module-usage"><span class="octicon octicon-link"></span></a>Python module usage</h1>
+
+<p>Below is brief overview of the <code>internetarchive</code> Python library. Please
+refer to the <a href="http://ia-wrapper.readthedocs.org/en/latest/">API
+documentation</a> for more
+specific details.</p>
+
+<h2>
+<a name="downloading-1" class="anchor" href="#downloading-1"><span class="octicon octicon-link"></span></a>Downloading</h2>
+
+<p>The Internet Archive stores data in
+<a href="http://blog.archive.org/2011/03/31/how-archive-org-items-are-structured/">items</a>.
+You can query the archive using an item identifier:</p>
+
+<pre lang="sourceCode"><code>&gt;&gt;&gt; import internetarchive
+&gt;&gt;&gt; item = internetarchive.Item('stairs')
+&gt;&gt;&gt; print item.metadata
+</code></pre>
+
+<p>Items contains files. You can download the entire item:</p>
+
+<pre lang="sourceCode"><code>&gt;&gt;&gt; item.download()
+</code></pre>
+
+<p>or you can download just a particular file:</p>
+
+<pre lang="sourceCode"><code>&gt;&gt;&gt; f = item.file('glogo.png')
+&gt;&gt;&gt; f.download() #writes to disk
+&gt;&gt;&gt; f.download('/foo/bar/some_other_name.png')
+</code></pre>
+
+<p>You can iterate over files:</p>
+
+<pre lang="sourceCode"><code>&gt;&gt;&gt; for f in item.files():
+...     print f.name, f.sha1
+</code></pre>
+
+<h2>
+<a name="uploading-1" class="anchor" href="#uploading-1"><span class="octicon octicon-link"></span></a>Uploading</h2>
+
+<p>You can use the IA's S3-like interface to upload files to an item. You
+need to supply your IAS3 credentials in environment variables in order
+to upload. You can retrieve S3 keys from
+<a href="https://archive.org/account/s3.php">https://archive.org/account/s3.php</a></p>
+
+<pre lang="sourceCode"><code>&gt;&gt;&gt; import os
+&gt;&gt;&gt; os.environ['AWS_ACCESS_KEY_ID']='x'
+&gt;&gt;&gt; os.environ['AWS_SECRET_ACCESS_KEY']='y'
+&gt;&gt;&gt; item = internetarchive.Item('new_identifier')
+&gt;&gt;&gt; item.upload('/path/to/image.jpg', metadata=dict(mediatype='image', creator='Jake Johnson'))
+</code></pre>
+
+<p>Item-level metadata must be supplied with the first file uploaded to an
+item.</p>
+
+<p>You can upload additional files to an existing item:</p>
+
+<pre lang="sourceCode"><code>&gt;&gt;&gt; item = internetarchive.Item('existing_identifier')
+&gt;&gt;&gt; item.upload(['/path/to/image2.jpg', '/path/to/image3.jpg'])
+</code></pre>
+
+<p>You can also upload file-like objects:</p>
+
+<pre lang="sourceCode"><code>&gt;&gt;&gt; import StringIO
+&gt;&gt;&gt; fh = StringIO.StringIO('hello world')
+&gt;&gt;&gt; fh.name = 'hello_world.txt
+&gt;&gt;&gt; item.upload(fh)
+</code></pre>
+
+<h2>
+<a name="modifying-metadata" class="anchor" href="#modifying-metadata"><span class="octicon octicon-link"></span></a>Modifying Metadata</h2>
+
+<p>You can modify metadata for existing items, using the
+<code>item.modify_metadata()</code> function. This uses the <a href="http://blog.archive.org/2013/07/04/metadata-api/">IA Metadata
+API</a> under the hood
+and requires your IAS3 credentials.</p>
+
+<pre lang="sourceCode"><code>&gt;&gt;&gt; import os
+&gt;&gt;&gt; os.environ['AWS_ACCESS_KEY_ID']='x'
+&gt;&gt;&gt; os.environ['AWS_SECRET_ACCESS_KEY']='y'
+&gt;&gt;&gt; item = internetarchive.Item('my_identifier')
+&gt;&gt;&gt; md = dict(blah='one', foo=['two', 'three'])
+&gt;&gt;&gt; item.modify_metadata(md)
+</code></pre>
+
+<h2>
+<a name="searching-1" class="anchor" href="#searching-1"><span class="octicon octicon-link"></span></a>Searching</h2>
+
+<p>You can search for items using the <a href="https://archive.org/advancedsearch.php">archive.org advanced search
+engine</a>:</p>
+
+<pre lang="sourceCode"><code>&gt;&gt;&gt; import internetarchive
+&gt;&gt;&gt; search = internetarchive.Search('collection:nasa')
+&gt;&gt;&gt; print search.num_found
+186911
+</code></pre>
+
+<p>You can iterate over your results:</p>
+
+<pre lang="sourceCode"><code>&gt;&gt;&gt; for result in search.results:
+...     print result['identifier']
+</code></pre>
+
+<h2>
+<a name="a-note-about-uploading-items-with-mixed-case-names" class="anchor" href="#a-note-about-uploading-items-with-mixed-case-names"><span class="octicon octicon-link"></span></a>A note about uploading items with mixed-case names</h2>
+
+<p>The Internet Archive allows mixed-case item identifiers, but Amazon S3
+does not allow mixed-case bucket names. The <code>internetarchive</code> python
+module is built on top of the <code>boto</code> S3 module. <code>boto</code> disallows
+creation of mixed-case buckets, but allows you to download from existing
+mixed-case buckets. If you wish to upload a new item to the Internet
+Archive with a mixed-case item identifier, you will need to monkey-patch
+the <code>boto.s3.connection.check_lowercase_bucketname</code> function:</p>
+
+<pre lang="sourceCode"><code>&gt;&gt;&gt; import boto
+&gt;&gt;&gt; def check_lowercase_bucketname(n):
+...     return True
+
+&gt;&gt;&gt; boto.s3.connection.check_lowercase_bucketname = check_lowercase_bucketname
+
+&gt;&gt;&gt; item = internetarchive.Item('TestUpload_pythonapi_20130812')
+&gt;&gt;&gt; item.upload('file.txt', dict(mediatype='texts', creator='Internet Archive'))
+True
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/jjjake">jjjake</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
